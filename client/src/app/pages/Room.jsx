@@ -21,7 +21,7 @@ const Room = () => {
         <ReactPlayer
           width="1280px"
           height="720px"
-          url="https://www.youtube.com/shorts/kPITA1Imzhc"
+          url="https://www.youtube.com/watch?v=WOZSI2_m-3o"
           controls={true}
         />
 		  </div>
