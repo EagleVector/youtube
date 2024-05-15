@@ -1,14 +1,15 @@
 import AWS from 'aws-sdk';
-import fs from 'fs';
 
 const uploadFileToS3 = async (req, res) => {
-	const filePath =
-		'/Users/shubhamkumar/Desktop/youtube/upload_server/assets/00415_Daniel_Ricciardo_Zandvoort_1920x1080_Desktop.jpg';
 
-	if (!fs.existsSync(filePath)) {
-		console.log('File Does Not Exist: ', filePath);
-		return;
+	console.log('Upload request Received!');
+
+	if (!req.file) {
+		console.log('No File Received from Client');
+		return res.status(400).send('File Not Received')
 	}
+
+	const file = req.file;
 
 	AWS.config.update({
 		region: 'us-east-1',
@@ -18,8 +19,8 @@ const uploadFileToS3 = async (req, res) => {
 
 	const params = {
 		Bucket: process.env.AWS_BUCKET,
-		Key: 'f1.png',
-		Body: fs.createReadStream(filePath)
+		Key: file.originalname,
+		Body: file.buffer
 	};
 
 	const s3 = new AWS.S3();
