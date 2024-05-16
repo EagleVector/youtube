@@ -17,16 +17,38 @@ const UploadForm = () => {
 
   const handleFileUpload = async (file) => {
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-      console.log('Going to Upload File to Server');
-      const res = await axios.post('http://localhost:8000/upload', 
-      formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      console.log(res.data);
+
+      const chunkSize = 1024 * 1024;
+      const totalChunks = Math.ceil(file.size/chunkSize);
+      console.log(file.size);
+      console.log(chunkSize);
+      console.log(totalChunks);
+
+      let start = 0;
+
+      for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+        const chunk = file.slice(start, start + chunkSize);
+        start += chunkSize;
+
+        const formData = new FormData();
+        formData.append('filename', file.name);
+        formData.append('chunk', chunk);
+        formData.append('totalChunks', totalChunks);
+        formData.append('chunkIndex', chunkIndex);
+
+        console.log(chunkIndex, '-------', chunk);
+
+        console.log('Uploading Chunk ', chunkIndex + 1, ' of ', totalChunks);
+
+        console.log('Going to Upload File to Server');
+        const res = await axios.post('http://localhost:8000/upload', 
+        formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        console.log(res.data);
+      }
   
     } catch (error) {
       console.error('Error Uploading File: ', error);
