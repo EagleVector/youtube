@@ -18,7 +18,7 @@ const UploadForm = () => {
   const handleFileUpload = async (file) => {
     try {
 
-      const chunkSize = 1024 * 1024;
+      const chunkSize = 2 * 1024 * 1024;
       const totalChunks = Math.ceil(file.size/chunkSize);
       console.log(file.size);
       console.log(chunkSize);
