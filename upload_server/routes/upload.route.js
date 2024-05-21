@@ -1,8 +1,9 @@
 import express from 'express';
-import uploadFileToS3 from '../controllers/upload.controller.js';
-// import multer from 'multer';
-import multipartUploadFileToS3 from '../controllers/multipartupload.controller.js';
-// const upload = multer();
+import { initializeUpload, uploadChunk, completeUpload } from '../controllers/multipartupload.controller.js';
+// import uploadFileToS3 from '../controllers/upload.controller.js';
+import multer from 'multer';
+// import multipartUploadFileToS3 from '../controllers/multipartupload.controller.js';
+const upload = multer();
 
 const uploadRouter = express.Router();
 // uploadRouter.post(
@@ -15,5 +16,13 @@ const uploadRouter = express.Router();
 // 	uploadFileToS3
 // );
 
-uploadRouter.post('/', multipartUploadFileToS3)
+// Route For initializing Upload
+uploadRouter.post('/initialize', upload.none(), initializeUpload);
+
+// Route For Uploading Individual Chunks
+uploadRouter.post('/', upload.single('chunk'), uploadChunk);
+
+// Route for completing the upload
+uploadRouter.post('/complete', completeUpload);
+
 export default uploadRouter;
