@@ -149,7 +149,7 @@ export const uploadChunk = async (req, res) => {
 export const completeUpload = async (req, res) => {
 	try {
 		console.log('Completing Upload');
-		const { filename, totalChunks, uploadId } = req.body;
+		const { filename, totalChunks, uploadId, title, description, author } = req.body;
 		const uploadedparts = [];
 
 		// Build uploaded parts array from request body
@@ -187,6 +187,13 @@ export const completeUpload = async (req, res) => {
 			.promise();
 
 		console.log('data-----------', uploadResult);
+
+		await addVideoDetailsToDB(
+			title,
+			description,
+			author,
+			uploadResult.Location
+		);
 		return res.status(200).json({ message: 'Uploaded Successfully!' });
 	} catch (error) {
 		console.log('Error Completing Upload: ', error);
