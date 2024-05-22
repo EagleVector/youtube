@@ -1,4 +1,5 @@
 import AWS from 'aws-sdk';
+import { addVideoDetailsToDB } from '../db/db.js';
 // import fs from 'fs';
 
 // const multipartUploadFileToS3 = async (req, res) => {
@@ -190,5 +191,23 @@ export const completeUpload = async (req, res) => {
 	} catch (error) {
 		console.log('Error Completing Upload: ', error);
 		return res.status(500).send('Upload Completion failed');
+	}
+};
+
+export const uploadToDb = async (req, res) => {
+	console.log('Adding Details To DB');
+
+	try {
+		const videoDetails = req.body;
+		await addVideoDetailsToDB(
+			videoDetails.title,
+			videoDetails.description,
+			videoDetails.author,
+			videoDetails.url
+		);
+		return res.status(200).send('SUCCESS');
+	} catch (error) {
+		console.log('Error Updating Database');
+		return res.status(400).send('Error Updating Database ', error);
 	}
 };
