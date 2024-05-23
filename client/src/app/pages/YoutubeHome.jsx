@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import dynamic from 'next/dynamic'
+import NavBar from '../components/Navbar';
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 
 const YoutubeHome = () => {
@@ -27,6 +28,7 @@ const YoutubeHome = () => {
   }, []);
   return (
     <div>
+      <NavBar />
       {loading ? (
                <div className='container mx-auto flex justify-center items-center h-screen'>Loading...</div>
            ) : (
