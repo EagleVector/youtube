@@ -1,10 +1,10 @@
-import ffmpeg from "fluent-ffmpeg";
-import ffmpegStatic from "ffmpeg-static";
-import fs from "fs";
+import ffmpeg from 'fluent-ffmpeg';
+import ffmpegStatic from 'ffmpeg-static';
+import fs from 'fs';
 ffmpeg.setFfmpegPath(ffmpegStatic);
 
 const convertToHLS = async () => {
-  const resolutions = [
+	const resolutions = [
 		{
 			resolution: '320*180',
 			videoBitrate: '500k',
@@ -22,10 +22,10 @@ const convertToHLS = async () => {
 		}
 	];
 
-  const mp4FileName = 'test.mp4';
+	const mp4FileName = 'test.mp4';
 	const variantPlaylists = [];
 
-  for (const { resolution, videoBitrate, audioBitrate } of resolutions) {
+	for (const { resolution, videoBitrate, audioBitrate } of resolutions) {
 		console.log(`HLS Conversion starting for ${resolution}`);
 		const outputFileName = `${mp4FileName.replace(
 			'.',
@@ -37,7 +37,7 @@ const convertToHLS = async () => {
 			'_'
 		)}_${resolution}_%03d.ts`;
 
-    await new Promise((resolve, reject) => {
+		await new Promise((resolve, reject) => {
 			ffmpeg('test.mp4')
 				.outputOptions([
 					`-c:v h264`,
@@ -56,16 +56,16 @@ const convertToHLS = async () => {
 				.run();
 		});
 
-    const variantPlaylist = {
+		const variantPlaylist = {
 			resolution,
 			outputFileName
 		};
 
-    variantPlaylists.push(variantPlaylist);
+		variantPlaylists.push(variantPlaylist);
 		console.log(`HLS conversion done for ${resolution}`);
-  }
+	}
 
-  console.log(`HLS master m3u8 playlist generating`);
+	console.log(`HLS master m3u8 playlist generating`);
 	let masterPlaylist = variantPlaylists
 		.map(variantPlaylist => {
 			const { resolution, outputFileName } = variantPlaylist;
@@ -78,14 +78,14 @@ const convertToHLS = async () => {
 			return `#EXT-X-STREAM-INF:BANDWIDTH=${bandwidth},RESOLUTION=${resolution}\n${outputFileName}`;
 		})
 		.join('\n');
-	
-    masterPlaylist = `#EXTM3U\n` + masterPlaylist;
 
-  const masterPlaylistFileName = `${mp4FileName.replace('.', '_')}_master.m3u8`;
+	masterPlaylist = `#EXTM3U\n` + masterPlaylist;
+
+	const masterPlaylistFileName = `${mp4FileName.replace('.', '_')}_master.m3u8`;
 
 	const masterPlaylistPath = `output/${masterPlaylistFileName}`;
 	fs.writeFileSync(masterPlaylistPath, masterPlaylist);
 	console.log(`HLS master m3u8 playlist generated`);
-}
+};
 
 export default convertToHLS;

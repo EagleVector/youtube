@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import KafkaConfig from './kafka/kafka.js';
 import convertToHLS from './hls/transcode.js';
+import s3Tos3 from './hls/s3Tos3.js'
 
 dotenv.config();
 const PORT = process.env.PORT || 8001;
@@ -21,14 +22,15 @@ app.get('/', (req, res) => {
 });
 
 app.get('/transcode', (req, res) => {
-  convertToHLS();
+  s3Tos3();
+  // convertToHLS();
   res.send('Transcoding Completed!');
 })
 
-// const kafkaConfig = new KafkaConfig();
-// kafkaConfig.consume("transcode", (value) => {
-//   console.log("Message Consumed: ", value)
-// })
+const kafkaConfig = new KafkaConfig()
+kafkaConfig.consume("transcode", (value) => {
+  console.log("Message Consumed: ", value)
+})
 
 app.listen(PORT, () => {
   console.log(`Transcoding Server listening on http://localhost:${PORT}`)
