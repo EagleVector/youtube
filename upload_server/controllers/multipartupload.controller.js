@@ -1,6 +1,7 @@
 import AWS from 'aws-sdk';
 import { addVideoDetailsToDB } from '../db/db.js';
-import { pushVideoForEncodingToKafka } from './kafkaPublisher.controller.js'
+import { pushVideoForEncodingToKafka } from './kafkaPublisher.controller.js';
+import PushToOpenSearch from '../opensearch/pushToOpenSearch.js';
 // import fs from 'fs';
 
 // const multipartUploadFileToS3 = async (req, res) => {
@@ -195,7 +196,9 @@ export const completeUpload = async (req, res) => {
 			author,
 			uploadResult.Location
 		);
-		pushVideoForEncodingToKafka(title, uploadResult.Location)
+		pushVideoForEncodingToKafka(title, filename)
+		// Pushing the data to open search
+		PushToOpenSearch(title, description, author, uploadResult.Location);
 		return res.status(200).json({ message: 'Uploaded Successfully!' });
 	} catch (error) {
 		console.log('Error Completing Upload: ', error);

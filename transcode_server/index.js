@@ -28,8 +28,23 @@ app.get('/transcode', (req, res) => {
 })
 
 const kafkaConfig = new KafkaConfig()
-kafkaConfig.consume("transcode", (value) => {
-  console.log("Message Consumed: ", value)
+kafkaConfig.consume("transcode", async (message) => {
+  try {
+    console.log("Got Data from Kafka: ", message);
+
+    // Parsing JSON message value
+    const value  = JSON.parse(message);
+
+    // Checking if the value and the filename exists
+    if (value && value.filename) {
+      console.log("Filename is: ", value.filename);
+      await s3Tos3(value.filename);
+    } else {
+      console.log("Didnot receive filename to be picked from S3");
+    }
+  } catch (error) {
+    console.log("Error processing Kafka Message: ", error);
+  }
 })
 
 app.listen(PORT, () => {
