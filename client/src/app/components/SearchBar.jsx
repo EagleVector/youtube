@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useVideoStore } from '../zustand/useVideoStore'
+import { useVideoStore } from '../zustand/useVideoStore';
 
 const SearchBar = () => {
 	const [searchText, setSearchText] = useState('');
-  const { updateSearchedVideos } = useVideoStore();
+	const { updateSearchedVideos } = useVideoStore();
 
 	const searchVideos = async () => {
 		try {
@@ -13,7 +13,7 @@ const SearchBar = () => {
 				{ params: { q: searchText } }
 			);
 			console.log('Data Received - ', res.data);
-      updateSearchedVideos(res.data);
+			updateSearchedVideos(res.data);
 			res.data.map(data => {
 				console.log(data);
 				console.log('video url', data._source.videoUrl);
